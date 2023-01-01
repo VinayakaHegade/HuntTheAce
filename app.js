@@ -1,28 +1,23 @@
-const cardObjDefinitions = [
-  { id: 1, imagePath: "/images/card-KingHearts.png", alt: "card-KingHearts" },
-  { id: 2, imagePath: "/images/card-JackClubs.png", alt: "card-JackClubs" },
-  {
-    id: 3,
-    imagePath: "/images/card-QueenDiamonds.png",
-    alt: "card-QueenDiamonds",
-  },
-  { id: 4, imagePath: "/images/card-AceSpades.png", alt: "card-AceSpades" },
+const cardObjectDefinitions = [
+  { id: 1, imagePath: "/images/card-KingHearts.png" },
+  { id: 2, imagePath: "/images/card-JackClubs.png" },
+  { id: 3, imagePath: "/images/card-QueenDiamonds.png" },
+  { id: 4, imagePath: "/images/card-AceSpades.png" },
 ];
-
 const aceId = 4;
 
-const cardBackImgPath = "/images/card-back-Blue.png";
+const cardBackImgPath = "/images/card-back-blue.png";
 
 let cards = [];
 
-const playGameBtn = document.getElementById("playGame");
+const playGameButtonElem = document.getElementById("playGame");
 
 const cardContainerElem = document.querySelector(".card-container");
 
-const collapseGridTemplateArea = '"a a" "a a"';
+const collapsedGridAreaTemplate = '"a a" "a a"';
 const cardCollectionCellClass = ".card-pos-a";
 
-const numCards = cardObjDefinitions.length;
+const numCards = cardObjectDefinitions.length;
 
 let cardPositions = [];
 
@@ -44,28 +39,20 @@ let roundNum = 0;
 let maxRounds = 4;
 let score = 0;
 
-let gameObj = {}
+let gameObj = {};
 
-const localStorageGameKey = "VAH"
+const localStorageGameKey = "HTA";
 
 /* <div class="card">
-  <div class="card-inner">
+<div class="card-inner">
     <div class="card-front">
-      <img
-        src="/images/card-JackClubs.png"
-        alt="card-JackClubs"
-        class="card-img"
-      />
+        <img src="/images/card-JackClubs.png" alt="" class="card-img">
     </div>
     <div class="card-back">
-      <img
-        src="/images/card-back-Blue.png"
-        alt="card-back-Blue"
-        class="card-img"
-      />
+        <img src="/images/card-back-Blue.png" alt="" class="card-img">
     </div>
-  </div>
-</div>; */
+</div>
+</div> */
 
 loadGame();
 
@@ -73,7 +60,7 @@ function gameOver() {
   updateStatusElement(scoreContainerElem, "none");
   updateStatusElement(roundContainerElem, "none");
 
-  const gameOverMessage = `Game Over! Final Score - <span class = "badge">${score}</span> Click 'Play Game' button to play again`;
+  const gameOverMessage = `Game Over! Final Score - <span class = 'badge'>${score}</span> Click 'Play Game' button to play again`;
 
   updateStatusElement(
     currentGameStatusElem,
@@ -83,14 +70,14 @@ function gameOver() {
   );
 
   gameInProgress = false;
-  playGameBtn.disabled = false;
+  playGameButtonElem.disabled = false;
 }
 
 function endRound() {
   setTimeout(() => {
     if (roundNum == maxRounds) {
       gameOver();
-      return
+      return;
     } else {
       startRound();
     }
@@ -98,11 +85,9 @@ function endRound() {
 }
 
 function chooseCard(card) {
-
   if (canChooseCard()) {
-
     evaluateCardChoice(card);
-    saveGameObjectToLocalStorage(score, roundNum)
+    saveGameObjectToLocalStorage(score, roundNum);
     flipCard(card, false);
 
     setTimeout(() => {
@@ -112,29 +97,29 @@ function chooseCard(card) {
         "block",
         primaryColor,
         "Card positions revealed"
-      )
+      );
 
-      endRound()
-    }, 3000)
-    cardsRevealed = true
+      endRound();
+    }, 2000);
+    cardsRevealed = true;
   }
 }
 
 function calculateScoreToAdd(roundNum) {
   if (roundNum == 1) {
-    return 100
+    return 100;
   } else if (roundNum == 2) {
-    return 50
+    return 50;
   } else if (roundNum == 3) {
-    return 25
+    return 25;
   } else {
-    return 10
+    return 10;
   }
 }
 
 function calculateScore() {
   const scoreToAdd = calculateScoreToAdd(roundNum);
-  score += scoreToAdd;
+  score = score + scoreToAdd;
 }
 
 function updateScore() {
@@ -143,8 +128,8 @@ function updateScore() {
     scoreElem,
     "block",
     primaryColor,
-    `Score<span class ="badge">${score}</span>`
-  )
+    `Score <span class='badge'>${score}</span>`
+  );
 }
 
 function updateStatusElement(elem, display, color, innerHTML) {
@@ -194,23 +179,23 @@ function loadGame() {
 
   cardFlyInEffect();
 
-  playGameBtn.addEventListener("click", () => startGame());
+  playGameButtonElem.addEventListener("click", () => startGame());
+
   updateStatusElement(scoreContainerElem, "none");
   updateStatusElement(roundContainerElem, "none");
 }
 
-function checkForIncompleteGame(){
-  const serializedGameObj = getLocalStorageItemValue(localStorageGameKey)
-  if(serializedGameObj){
-    gameObj = getObjectFromJSON(serializedGameObj)
+function checkForIncompleteGame() {
+  const serializedGameObj = getLocalStorageItemValue(localStorageGameKey);
+  if (serializedGameObj) {
+    gameObj = getObjectFromJSON(serializedGameObj);
 
-    if(gameObj.round >= maxRounds){
-      removeLocalStorageItem(localStorageGameKey)
-    }
-    else{
-      if (confirm('Would you like to continue with your last game?')){
-        score = gameObj.score
-        round = gameObj.round
+    if (gameObj.round >= maxRounds) {
+      removeLocalStorageItem(localStorageGameKey);
+    } else {
+      if (confirm("Would you like to continue with your last game?")) {
+        score = gameObj.score;
+        roundNum = gameObj.round;
       }
     }
   }
@@ -220,12 +205,11 @@ function startGame() {
   initializeNewGame();
   startRound();
 }
-
 function initializeNewGame() {
   score = 0;
   roundNum = 0;
 
-  checkForIncompleteGame()
+  checkForIncompleteGame();
 
   shufflingInProgress = false;
 
@@ -236,26 +220,24 @@ function initializeNewGame() {
     scoreElem,
     "block",
     primaryColor,
-    `Score <span class="badge">${score}</span>`
+    `Score <span class='badge'>${score}</span>`
   );
   updateStatusElement(
     roundElem,
     "block",
     primaryColor,
-    `Round <span class="badge">${roundNum}</span>`
+    `Round <span class='badge'>${roundNum}</span>`
   );
 }
-
 function startRound() {
   initializeNewRound();
   collectCards();
   flipCards(true);
   shuffleCards();
 }
-
 function initializeNewRound() {
   roundNum++;
-  playGameBtn.disabled = true;
+  playGameButtonElem.disabled = true;
 
   gameInProgress = true;
   shufflingInProgress = true;
@@ -267,33 +249,33 @@ function initializeNewRound() {
     primaryColor,
     "Shuffling..."
   );
+
   updateStatusElement(
     roundElem,
     "block",
     primaryColor,
-    `Round <span class="badge">${roundNum}</span>`
+    `Round <span class='badge'>${roundNum}</span>`
   );
 }
 
 function collectCards() {
-  transformGridArea(collapseGridTemplateArea);
+  transformGridArea(collapsedGridAreaTemplate);
   addCardsToGridAreaCell(cardCollectionCellClass);
 }
 
 function transformGridArea(areas) {
   cardContainerElem.style.gridTemplateAreas = areas;
 }
-
 function addCardsToGridAreaCell(cellPositionClassName) {
   const cellPositionElem = document.querySelector(cellPositionClassName);
 
   cards.forEach((card, index) => {
-    addChildElementToParent(cellPositionElem, card);
-  })
+    addChildElement(cellPositionElem, card);
+  });
 }
 
 function flipCard(card, flipToBack) {
-  const innerCardElem = card.firstChild
+  const innerCardElem = card.firstChild;
 
   if (flipToBack && !innerCardElem.classList.contains("flip-it")) {
     innerCardElem.classList.add("flip-it");
@@ -307,7 +289,7 @@ function flipCards(flipToBack) {
     setTimeout(() => {
       flipCard(card, flipToBack);
     }, index * 100);
-  })
+  });
 }
 
 function cardFlyInEffect() {
@@ -320,7 +302,7 @@ function cardFlyInEffect() {
     count++;
     if (cardCount == numCards) {
       clearInterval(id);
-      playGameBtn.style.display = "inline-block";
+      playGameButtonElem.style.display = "inline-block";
     }
     if (count == 1 || count == 250 || count == 500 || count == 750) {
       cardCount++;
@@ -336,7 +318,6 @@ function removeShuffleClasses() {
     card.classList.remove("shuffle-right");
   });
 }
-
 function animateShuffle(shuffleCount) {
   const random1 = Math.floor(Math.random() * numCards) + 1;
   const random2 = Math.floor(Math.random() * numCards) + 1;
@@ -372,47 +353,42 @@ function shuffleCards() {
         currentGameStatusElem,
         "block",
         primaryColor,
-        "Please click the card that you  think is the Ace of Spades..."
+        "Please click the card that you think is the Ace of Spades..."
       );
     } else {
       shuffleCount++;
     }
   }
 }
-
 function randomizeCardPositions() {
   const random1 = Math.floor(Math.random() * numCards) + 1;
   const random2 = Math.floor(Math.random() * numCards) + 1;
-
-  // console.log("random1: "+random1+ " random2: "+random2 );
 
   const temp = cardPositions[random1 - 1];
 
   cardPositions[random1 - 1] = cardPositions[random2 - 1];
   cardPositions[random2 - 1] = temp;
 }
-
 function dealCards() {
   addCardsToAppropriateCell();
-  const areasTemplate = returnGridAreasMappedToCardsPos();
+  const areasTemplate = returnGridAreasMappedToCardPos();
 
   transformGridArea(areasTemplate);
 }
-
-function returnGridAreasMappedToCardsPos() {
+function returnGridAreasMappedToCardPos() {
   let firstPart = "";
   let secondPart = "";
-  let areas = ""; 
+  let areas = "";
 
   cards.forEach((card, index) => {
     if (cardPositions[index] == 1) {
-      areas = areas + "a";
+      areas = areas + "a ";
     } else if (cardPositions[index] == 2) {
-      areas = areas + "b";
+      areas = areas + "b ";
     } else if (cardPositions[index] == 3) {
-      areas = areas + "c";
+      areas = areas + "c ";
     } else if (cardPositions[index] == 4) {
-      areas = areas + "d";
+      areas = areas + "d ";
     }
     if (index == 1) {
       firstPart = areas.substring(0, areas.length - 1);
@@ -422,76 +398,81 @@ function returnGridAreasMappedToCardsPos() {
     }
   });
 
-  return `"${firstPart}" "${secondPart}"`
+  return `"${firstPart}" "${secondPart}"`;
 }
 
 function addCardsToAppropriateCell() {
   cards.forEach((card) => {
-    addCardToGridCell(card)
-  })
+    addCardToGridCell(card);
+  });
 }
 
 function createCards() {
-  cardObjDefinitions.forEach((cardItem) => {
+  cardObjectDefinitions.forEach((cardItem) => {
     createCard(cardItem);
-  })
+  });
 }
 
 function createCard(cardItem) {
-  // creating all div elements required to make a card
+  //create div elements that make up a card
   const cardElem = createElement("div");
   const cardInnerElem = createElement("div");
   const cardFrontElem = createElement("div");
   const cardBackElem = createElement("div");
 
-  // creating front and back img elements for the card
+  //create front and back image elements for a card
   const cardFrontImg = createElement("img");
   const cardBackImg = createElement("img");
 
-  // adding class and id to card element
+  //add class and id to card element
   addClassToElement(cardElem, "card");
   addClassToElement(cardElem, "fly-in");
   addIdToElement(cardElem, cardItem.id);
 
-  // adding class to inner card element
+  //add class to inner card element
   addClassToElement(cardInnerElem, "card-inner");
 
-  // adding class to front card element
+  //add class to front card element
   addClassToElement(cardFrontElem, "card-front");
 
-  // adding class to back card element
+  //add class to back card element
   addClassToElement(cardBackElem, "card-back");
 
-  // adding src attribute and appropriate value to img back element
-  addAttributeToImageElem(cardBackImg, cardBackImgPath, "card-back-blue");
+  //add src attribute and appropriate value to img element - back of card
+  addSrcToImageElem(cardBackImg, cardBackImgPath);
 
-  // adding src attribute and appropriate value to img front element
-  addAttributeToImageElem(cardFrontImg, cardItem.imagePath, cardItem.alt);
+  //add src attribute and appropriate value to img element - front of card
+  addSrcToImageElem(cardFrontImg, cardItem.imagePath);
 
-  // adding class to front and back img element
+  //assign class to back image element of back of card
   addClassToElement(cardBackImg, "card-img");
+
+  //assign class to front image element of front of card
   addClassToElement(cardFrontImg, "card-img");
 
-  // appending img elements as child element to card front and back div elements
-  addChildElementToParent(cardFrontElem, cardFrontImg);
-  addChildElementToParent(cardBackElem, cardBackImg);
+  //add front image element as child element to front card element
+  addChildElement(cardFrontElem, cardFrontImg);
 
-  // appending card front and back div elements as child to card inner div element
-  addChildElementToParent(cardInnerElem, cardFrontElem);
-  addChildElementToParent(cardInnerElem, cardBackElem);
+  //add back image element as child element to back card element
+  addChildElement(cardBackElem, cardBackImg);
 
-  // appending card inner div element as child to card div element
-  addChildElementToParent(cardElem, cardInnerElem);
+  //add front card element as child element to inner card element
+  addChildElement(cardInnerElem, cardFrontElem);
 
-  // add card element as child element to appropriate grid cell
+  //add back card element as child element to inner card element
+  addChildElement(cardInnerElem, cardBackElem);
+
+  //add inner card element as child element to card element
+  addChildElement(cardElem, cardInnerElem);
+
+  //add card element as child element to appropriate grid cell
   addCardToGridCell(cardElem);
 
   initializeCardPositions(cardElem);
 
-  attachClickEventHandlerToCard(cardElem);
+  attatchClickEventHandlerToCard(cardElem);
 }
-
-function attachClickEventHandlerToCard(card) {
+function attatchClickEventHandlerToCard(card) {
   card.addEventListener("click", () => chooseCard(card));
 }
 
@@ -500,66 +481,53 @@ function initializeCardPositions(card) {
 }
 
 function createElement(elemType) {
-  return document.createElement(elemType)
+  return document.createElement(elemType);
 }
-
 function addClassToElement(elem, className) {
   elem.classList.add(className);
 }
-
 function addIdToElement(elem, id) {
   elem.id = id;
 }
-
-function addAttributeToImageElem(imgElem, src, alt) {
+function addSrcToImageElem(imgElem, src) {
   imgElem.src = src;
-  imgElem.alt = alt;
 }
-
-function addChildElementToParent(parentElem, childElem) {
+function addChildElement(parentElem, childElem) {
   parentElem.appendChild(childElem);
 }
 
 function addCardToGridCell(card) {
-  const cardPositionClassName = mapCardToGridCell(card);
-  const cardPosElem = document.querySelector(cardPositionClassName);
-  // console.log(cardPosElem);
-  //   console.log(card);
-  addChildElementToParent(cardPosElem, card);
-}
+  const cardPositionClassName = mapCardIdToGridCell(card);
 
-function mapCardToGridCell(card) {
+  const cardPosElem = document.querySelector(cardPositionClassName);
+
+  addChildElement(cardPosElem, card);
+}
+function mapCardIdToGridCell(card) {
   if (card.id == 1) {
-    return ".card-pos-a"
-  } 
-  else if (card.id == 2) {
-    return ".card-pos-b"
-  } 
-  else if (card.id == 3) {
-    return ".card-pos-c"
-  } 
-  else if (card.id == 4) {
-    return ".card-pos-d"
+    return ".card-pos-a";
+  } else if (card.id == 2) {
+    return ".card-pos-b";
+  } else if (card.id == 3) {
+    return ".card-pos-c";
+  } else if (card.id == 4) {
+    return ".card-pos-d";
   }
 }
 
-// local storage
+//local storage functions
 function getSerializedObjectAsJSON(obj) {
   return JSON.stringify(obj);
 }
-
 function getObjectFromJSON(json) {
   return JSON.parse(json);
 }
-
 function updateLocalStorageItem(key, value) {
   localStorage.setItem(key, value);
 }
-
 function removeLocalStorageItem(key) {
   localStorage.removeItem(key);
 }
-
 function getLocalStorageItemValue(key) {
   return localStorage.getItem(key);
 }
@@ -568,8 +536,10 @@ function updateGameObject(score, round) {
   gameObj.score = score;
   gameObj.round = round;
 }
-
 function saveGameObjectToLocalStorage(score, round) {
   updateGameObject(score, round);
-  updateLocalStorageItem(localStorageGameKey, getSerializedObjectAsJSON(gameObj));
+  updateLocalStorageItem(
+    localStorageGameKey,
+    getSerializedObjectAsJSON(gameObj)
+  );
 }
