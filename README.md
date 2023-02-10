@@ -1,2 +1,2 @@
 # HuntTheAce
-[Live Link] (https://acehunter.netlify.app)
+[Live Link](https://acehunter.netlify.app)
